@@ -49,7 +49,8 @@ export class MultiSelectComponent implements ControlValueAccessor {
     noDataAvailablePlaceholderText: 'No data available',
     closeDropDownOnSelection: false,
     showSelectedItemsAtTop: false,
-    defaultOpen: false
+    defaultOpen: false,
+    allowRemoteDataSearch: false
   };
 
   @Input()
@@ -224,7 +225,12 @@ export class MultiSelectComponent implements ControlValueAccessor {
   }
 
   isAllItemsSelected(): boolean {
-    return this._data.length === this.selectedItems.length;
+    const itemDisabledCount = this._data.filter(item => item.isDisabled).length;
+    // take disabled items into consideration when checking
+    if ((!this.data || this.data.length === 0) && this._settings.allowRemoteDataSearch) {
+      return false;
+    }
+    return this._data.length === this.selectedItems.length + itemDisabledCount;
   }
 
   showButton(): boolean {
